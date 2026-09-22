@@ -1,0 +1,96 @@
+name: Publish to Zenodo
+
+# Запускается только руками: депозит необратим, и случайный push его вызывать не должен.
+on:
+  workflow_dispatch:
+    inputs:
+      author_name:
+        description: 'Автор записи: «Фамилия, Имя». В репозитории не хранится'
+        required: true
+      author_orcid:
+        description: 'ORCID автора (можно пусто)'
+        required: false
+        default: ''
+      model:
+        description: 'Файл модели'
+        required: true
+        default: 'models/skoropis-12.mlmodel'
+      doi:
+        description: 'DOI прошлой версии — тогда будет создана НОВАЯ ВЕРСИЯ рядом со старой. Пусто — первая публикация'
+        required: false
+        default: ''
+      listed:
+        description: 'Просить включения в сообщество (видимость в kraken list)'
+        type: boolean
+        default: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # htrmopo — то, чем публикует сам kraken; ставится без torch и весит немного.
+      - run: pip install 'htrmopo~=0.5'
+
+      - name: Проверить, что токен заведён
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+        run: |
+          if [ -z "$ZENODO_TOKEN" ]; then
+            echo "::error::Секрет ZENODO_TOKEN не задан. Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+
+      # Имя автора подставляется здесь, в рабочую копию карточки, и в репозиторий
+      # не возвращается.
+      - name: Подставить автора в карточку
+        env:
+          AUTHOR_NAME: ${{ inputs.author_name }}
+          AUTHOR_ORCID: ${{ inputs.author_orcid }}
+        run: |
+          python3 - <<'PY'
+          import os, re, yaml, pathlib
+          p = pathlib.Path("MODEL_CARD.md")
+          text = p.read_text(encoding="utf-8")
+          head, body = re.match(r'^---\n(.*?)\n---\n(.*)$', text, re.S).groups()
+          md = yaml.safe_load(head)
+          author = {"name": os.environ["AUTHOR_NAME"]}
+          if os.environ.get("AUTHOR_ORCID"):
+              author["orcid"] = os.environ["AUTHOR_ORCID"]
+          md["authors"] = [author]
+          p.write_text(f"---\n{yaml.dump(md, allow_unicode=True)}---\n{body}", encoding="utf-8")
+          print("автор подставлен:", author["name"])
+          PY
+
+      - name: Депозит
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+          MODEL: ${{ inputs.model }}
+          DOI: ${{ inputs.doi }}
+          LISTED: ${{ inputs.listed }}
+        run: |
+          set -o pipefail            # но не set -x: токен в аргументах
+          args=(publish -i MODEL_CARD.md -a "$ZENODO_TOKEN")
+          [ -n "$DOI" ] && args+=(-d "$DOI")
+          [ "$LISTED" = "true" ] || args+=(-p)
+          htrmopo "${args[@]}" "$MODEL" 2>&1 | tee /tmp/out.txt
+
+      - name: Записать DOI в итог запуска
+        if: always()
+        run: |
+          {
+            echo "## Депозит"
+            echo
+            if [ -n "${{ inputs.doi }}" ]; then
+              echo "Новая версия записи \`${{ inputs.doi }}\`."
+            else
+              echo "Первая публикация."
+            fi
+            echo
+            grep -oE '10\.5281/zenodo\.[0-9]+' /tmp/out.txt 2>/dev/null | sort -u | sed 's/^/- DOI: /' || echo "- DOI в выводе не найден, смотрите лог"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,42 @@
+name: Validate model card
+
+# Карточка проверяется на каждом изменении, а не в момент депозита: ошибку в шапке
+# дешевле увидеть здесь, чем на половине загрузки пятнадцати мегабайт.
+on:
+  push:
+    paths: ['MODEL_CARD.md', '.github/workflows/validate-card.yml']
+  pull_request:
+    paths: ['MODEL_CARD.md']
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'htrmopo~=0.5'
+      - name: Проверить шапку по схеме v1
+        run: |
+          python3 - <<'PY'
+          import re, yaml, pathlib
+          from jsonschema import validate, FormatChecker
+          from htrmopo.util import _v1_schema
+
+          text = pathlib.Path("MODEL_CARD.md").read_text(encoding="utf-8")
+          m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
+          if not m:
+              raise SystemExit("::error::В MODEL_CARD.md нет YAML-шапки")
+          md = yaml.safe_load(m.group(1))
+
+          # Эти два поля заполняются при публикации, а не лежат в репозитории:
+          # id подставляет Zenodo, автора — workflow из поля запуска.
+          md["id"] = md.get("id") or "10.5281/zenodo.0000000"
+          md["authors"] = [{"name": "Placeholder, Name"}]
+
+          validate(md, _v1_schema, format_checker=FormatChecker())
+          print("шапка проходит схему v1")
+          print("поля:", ", ".join(sorted(md)))
+          PY
