@@ -45,7 +45,7 @@ fills that gap.
 - **Licence** — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **Published** — [10.5281/zenodo.22905349](https://doi.org/10.5281/zenodo.22905349), the concept DOI, which resolves to the newest version
 
-Install it with `kraken get 10.5281/zenodo.22905350`, then run
+Install it with `kraken get 10.5281/zenodo.22905349`, then run
 `kraken -f image -x -i page.jpg out.xml segment -bl ocr -m skoropis-12.mlmodel`.
 
 ## Training data
@@ -112,8 +112,8 @@ the [catalogue of censuses](https://dtretyakov.github.io/perepisi-catalog/).
 > 2026. https://doi.org/10.5281/zenodo.22905349
 
 The link above is the **concept DOI**: it always resolves to the newest version. To pin
-the exact weights behind a result, cite the version DOI instead — the first release is
-[10.5281/zenodo.22905350](https://doi.org/10.5281/zenodo.22905350).
+the exact weights behind a result, cite the version DOI instead — the current release is
+[10.5281/zenodo.22905381](https://doi.org/10.5281/zenodo.22905381).
 
 Trained on ground truth aligned against transcriptions by Yu. V. Konovalov, the
 census1710 project and Rodnaya Vyatka.
