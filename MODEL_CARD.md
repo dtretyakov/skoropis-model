@@ -36,19 +36,17 @@ September 2026: the Slavic models in Transkribus are 16th-century semi-uncial an
 11th–16th-century uncial, and the Russian ones begin in the 18th century. This one
 fills that gap.
 
-| | |
-|---|---|
-| Format | kraken 7, `.mlmodel`, `baselines` segmentation |
-| Size | 15 MB |
-| Base model | **none — trained from scratch** |
-| Architecture | kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers |
-| Training | AdamW, cosine schedule, batch 16, lr 3e-4; best epoch 12 of 40 |
-| Codec | 273 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, titlo abbreviations, superscript letters |
-| Licence | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+- **Format** — kraken 7, `.mlmodel`, `baselines` segmentation
+- **Size** — 15 MB
+- **Base model** — *none: trained from scratch*
+- **Architecture** — kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers
+- **Training** — AdamW, cosine schedule, batch 16, lr 3e-4; best epoch 12 of 40
+- **Codec** — 273 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, titlo abbreviations, superscript letters
+- **Licence** — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Published** — [10.5281/zenodo.22905349](https://doi.org/10.5281/zenodo.22905349), the concept DOI, which resolves to the newest version
 
-```bash
-kraken -f image -x -i page.jpg out.xml segment -bl ocr -m skoropis-12.mlmodel
-```
+Install it with `kraken get 10.5281/zenodo.22905350`, then run
+`kraken -f image -x -i page.jpg out.xml segment -bl ocr -m skoropis-12.mlmodel`.
 
 ## Training data
 
@@ -69,14 +67,12 @@ statement of provenance rather than of courtesy.
 
 ## Measured performance
 
-| | |
-|---|---|
-| Best validation accuracy | **0.9225** |
-| Hand of 1680 | **91.5% of characters** |
-| Continuous text, 1620–1720 | **24–31 characters per line** |
-| Poskochin's Tobolsk census, ф.214 оп.5 д.261 | 43.6 chars/line at mean confidence 0.954 |
-| First revision tales 1719–1722, ф.214 оп.1 д.1508 | 33.0 chars/line at 0.880 |
-| **Cases of 1720–1800** | **13–16 chars/line — noise** |
+- Best validation accuracy — **0.9225**
+- Hand of 1680 — **91.5% of characters**
+- Continuous text of 1620–1720 — **24–31 characters per line**
+- Poskochin's Tobolsk census (RGADA f.214 op.5 d.261) — 43.6 chars/line at mean confidence 0.954
+- First revision tales of 1719–1722 (f.214 op.1 d.1508) — 33.0 chars/line at 0.880
+- **Cases of 1720–1800 — 13–16 chars/line, which is noise**
 
 The `accuracy` field inside the file is empty: the training history was not preserved
 on export, and putting a number there after the fact would pass one measurement off as

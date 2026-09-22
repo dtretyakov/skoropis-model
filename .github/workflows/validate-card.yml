@@ -36,5 +36,19 @@ jobs:
 
           validate(md, _v1_schema, format_checker=FormatChecker())
           print("header validates against schema v1")
+
+          # Zenodo renders the card body with a Markdown dialect that knows neither
+          # tables nor fenced code blocks: a table comes out as a row of pipes and a
+          # fenced block collapses into one line with the language word inside it.
+          # The card has to read on the record page, so both are refused here.
+          body = text.split("---", 2)[2]
+          bad = []
+          if any(l.lstrip().startswith("|") for l in body.splitlines()):
+              bad.append("a Markdown table — use a bullet list")
+          if "```" in body:
+              bad.append("a fenced code block — use an inline `code` span")
+          if bad:
+              raise SystemExit("::error::Zenodo will not render " + "; ".join(bad))
+          print("body renders on Zenodo: no tables, no fenced blocks")
           print("fields:", ", ".join(sorted(md)))
           PY
