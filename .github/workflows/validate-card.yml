@@ -1,7 +1,7 @@
 name: Validate model card
 
-# Карточка проверяется на каждом изменении, а не в момент депозита: ошибку в шапке
-# дешевле увидеть здесь, чем на половине загрузки пятнадцати мегабайт.
+# The card is checked on every change rather than at deposit time: a malformed header
+# is cheaper to find here than halfway through uploading fifteen megabytes.
 on:
   push:
     paths: ['MODEL_CARD.md', '.github/workflows/validate-card.yml']
@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install 'htrmopo~=0.5'
-      - name: Проверить шапку по схеме v1
+      - name: Validate the header against schema v1
         run: |
           python3 - <<'PY'
           import re, yaml, pathlib
@@ -28,15 +28,13 @@ jobs:
           text = pathlib.Path("MODEL_CARD.md").read_text(encoding="utf-8")
           m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
           if not m:
-              raise SystemExit("::error::В MODEL_CARD.md нет YAML-шапки")
+              raise SystemExit("::error::MODEL_CARD.md has no YAML header")
           md = yaml.safe_load(m.group(1))
 
-          # Эти два поля заполняются при публикации, а не лежат в репозитории:
-          # id подставляет Zenodo, автора — workflow из поля запуска.
+          # id is filled in at deposit time by Zenodo, so it is empty here on purpose.
           md["id"] = md.get("id") or "10.5281/zenodo.0000000"
-          md["authors"] = [{"name": "Placeholder, Name"}]
 
           validate(md, _v1_schema, format_checker=FormatChecker())
-          print("шапка проходит схему v1")
-          print("поля:", ", ".join(sorted(md)))
+          print("header validates against schema v1")
+          print("fields:", ", ".join(sorted(md)))
           PY

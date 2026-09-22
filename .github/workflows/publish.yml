@@ -1,26 +1,27 @@
 name: Publish to Zenodo
 
-# Запускается только руками: депозит необратим, и случайный push его вызывать не должен.
+# Manual dispatch only: a deposit cannot be withdrawn, and a stray push must not cause one.
 on:
   workflow_dispatch:
     inputs:
       author_name:
-        description: 'Автор записи: «Фамилия, Имя». В репозитории не хранится'
-        required: true
+        description: 'Override the author in the card, e.g. "Surname, Given name". Leave empty to use the card as committed'
+        required: false
+        default: ''
       author_orcid:
-        description: 'ORCID автора (можно пусто)'
+        description: 'ORCID of the author (optional)'
         required: false
         default: ''
       model:
-        description: 'Файл модели'
+        description: 'Weights file'
         required: true
         default: 'models/skoropis-12.mlmodel'
       doi:
-        description: 'DOI прошлой версии — тогда будет создана НОВАЯ ВЕРСИЯ рядом со старой. Пусто — первая публикация'
+        description: 'DOI of the previous version — publishes a NEW VERSION beside it. Empty means a first deposit'
         required: false
         default: ''
       listed:
-        description: 'Просить включения в сообщество (видимость в kraken list)'
+        description: 'Request community inclusion, which makes the model visible to kraken list'
         type: boolean
         default: true
 
@@ -34,25 +35,25 @@ jobs:
         with:
           python-version: '3.12'
 
-      # htrmopo — то, чем публикует сам kraken; ставится без torch и весит немного.
+      # htrmopo is what kraken itself publishes with; it installs without torch and is small.
       - run: pip install 'htrmopo~=0.5'
 
-      - name: Проверить, что токен заведён
+      - name: Check the token is set
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
         run: |
           if [ -z "$ZENODO_TOKEN" ]; then
-            echo "::error::Секрет ZENODO_TOKEN не задан. Settings → Secrets and variables → Actions"
+            echo "::error::Secret ZENODO_TOKEN is not set. Settings -> Secrets and variables -> Actions"
             exit 1
           fi
 
-      # Имя автора подставляется здесь, в рабочую копию карточки, и в репозиторий
-      # не возвращается.
-      - name: Подставить автора в карточку
+      # An override is written into a working copy of the card and never committed.
+      - name: Apply the author override
         env:
           AUTHOR_NAME: ${{ inputs.author_name }}
           AUTHOR_ORCID: ${{ inputs.author_orcid }}
         run: |
+          if [ -z "$AUTHOR_NAME" ]; then echo "no override, card left as is"; exit 0; fi
           python3 - <<'PY'
           import os, re, yaml, pathlib
           p = pathlib.Path("MODEL_CARD.md")
@@ -67,30 +68,30 @@ jobs:
           print("автор подставлен:", author["name"])
           PY
 
-      - name: Депозит
+      - name: Deposit
         env:
           ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
           MODEL: ${{ inputs.model }}
           DOI: ${{ inputs.doi }}
           LISTED: ${{ inputs.listed }}
         run: |
-          set -o pipefail            # но не set -x: токен в аргументах
+          set -o pipefail            # but no set -x: the token is in the arguments
           args=(publish -i MODEL_CARD.md -a "$ZENODO_TOKEN")
           [ -n "$DOI" ] && args+=(-d "$DOI")
           [ "$LISTED" = "true" ] || args+=(-p)
           htrmopo "${args[@]}" "$MODEL" 2>&1 | tee /tmp/out.txt
 
-      - name: Записать DOI в итог запуска
+      - name: Write the DOI into the run summary
         if: always()
         run: |
           {
-            echo "## Депозит"
+            echo "## Deposit"
             echo
             if [ -n "${{ inputs.doi }}" ]; then
-              echo "Новая версия записи \`${{ inputs.doi }}\`."
+              echo "New version of record \`${{ inputs.doi }}\`."
             else
-              echo "Первая публикация."
+              echo "First deposit."
             fi
             echo
-            grep -oE '10\.5281/zenodo\.[0-9]+' /tmp/out.txt 2>/dev/null | sort -u | sed 's/^/- DOI: /' || echo "- DOI в выводе не найден, смотрите лог"
+            grep -oE '10\.5281/zenodo\.[0-9]+' /tmp/out.txt 2>/dev/null | sort -u | sed 's/^/- DOI: /' || echo "- no DOI found in the output; see the log"
           } >> "$GITHUB_STEP_SUMMARY"

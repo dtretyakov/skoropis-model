@@ -1,8 +1,6 @@
 ---
-# Авторы подставляются workflow'ом при публикации из входных полей запуска,
-# чтобы имя не лежало в репозитории. Оставьте как есть.
 authors:
-  - name: 'PLACEHOLDER'
+  - name: 'dtretyakov'
 id: ''
 summary: 'skoropis-12 — Russian chancery cursive (skoropis) of the 17th century, 1620-1720'
 license: CC-BY-4.0
@@ -27,7 +25,7 @@ keywords:
   - 17th century
   - pre-reform orthography
 datasets: []
-citation: 'skoropis-12: a kraken model for 17th-century Russian chancery cursive. 2026. CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/'
+citation: 'dtretyakov. skoropis-12: a kraken model for 17th-century Russian chancery cursive. 2026. CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/'
 ---
 
 # skoropis-12 — a kraken model for 17th-century Russian chancery cursive
@@ -114,8 +112,8 @@ the [catalogue of censuses](https://dtretyakov.github.io/perepisi-catalog/).
 
 ## Citation
 
-> skoropis-12: a kraken model for 17th-century Russian chancery cursive. 2026.
-> CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/
+> dtretyakov. skoropis-12: a kraken model for 17th-century Russian chancery cursive.
+> 2026. CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/
 
 Trained on ground truth aligned against transcriptions by Yu. V. Konovalov, the
 census1710 project and Rodnaya Vyatka.
