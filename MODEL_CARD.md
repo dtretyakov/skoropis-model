@@ -25,7 +25,7 @@ keywords:
   - 17th century
   - pre-reform orthography
 datasets: []
-citation: 'dtretyakov. skoropis-12: a kraken model for 17th-century Russian chancery cursive. 2026. CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/'
+citation: 'dtretyakov. skoropis-12: a kraken model for 17th-century Russian chancery cursive. 2026. https://doi.org/10.5281/zenodo.22905349'
 ---
 
 # skoropis-12 — a kraken model for 17th-century Russian chancery cursive
@@ -113,7 +113,11 @@ the [catalogue of censuses](https://dtretyakov.github.io/perepisi-catalog/).
 ## Citation
 
 > dtretyakov. skoropis-12: a kraken model for 17th-century Russian chancery cursive.
-> 2026. CC BY 4.0. https://dtretyakov.github.io/perepisi-catalog/
+> 2026. https://doi.org/10.5281/zenodo.22905349
+
+The link above is the **concept DOI**: it always resolves to the newest version. To pin
+the exact weights behind a result, cite the version DOI instead — the first release is
+[10.5281/zenodo.22905350](https://doi.org/10.5281/zenodo.22905350).
 
 Trained on ground truth aligned against transcriptions by Yu. V. Konovalov, the
 census1710 project and Rodnaya Vyatka.

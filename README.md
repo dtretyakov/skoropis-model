@@ -3,6 +3,13 @@
 Weights for a kraken recogniser of 17th-century Russian chancery cursive, the model
 card that travels with them, and the workflow that deposits both on Zenodo.
 
+**Published: [10.5281/zenodo.22905349](https://doi.org/10.5281/zenodo.22905349)** —
+the concept DOI, always resolving to the newest version.
+
+```bash
+kraken get 10.5281/zenodo.22905350
+```
+
 What the model reads, what it was trained on and where it fails is in
 [MODEL_CARD.md](MODEL_CARD.md).
 
