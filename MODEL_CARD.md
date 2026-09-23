@@ -131,7 +131,8 @@ the [catalogue of censuses](https://dtretyakov.github.io/perepisi-catalog/).
 
 The link above is the **concept DOI**: it always resolves to the newest version. To pin
 the exact weights behind a result, cite the version DOI instead; each release has its own,
-listed on the record page. Version 4 is
+listed on the record page. Version 5 is
+[10.5281/zenodo.22921457](https://doi.org/10.5281/zenodo.22921457), version 4
 [10.5281/zenodo.22921309](https://doi.org/10.5281/zenodo.22921309), version 3
 [10.5281/zenodo.22912945](https://doi.org/10.5281/zenodo.22912945), version 2
 [10.5281/zenodo.22905381](https://doi.org/10.5281/zenodo.22905381).
