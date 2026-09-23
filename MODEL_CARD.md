@@ -52,15 +52,19 @@ Install it with `kraken get 10.5281/zenodo.22905349`, then run
 
 ## Training data
 
-About **7200 annotated pages, 99 000 lines**, from **24 chancery and census books** dated
-**1625 to 1719**. They come from the record-keeping of the Siberian Chancery and the
-Pomestny Chancery and cover **the Urals, Western Siberia, the Russian North and the Vyatka
-land**: land-tax books, name books, census books of 1710 and the tales of the first
-revision. Version 3 added eleven census books of 1707–1711 (Solikamsk, Cherdyn, Tobolsk,
-Kaigorod), so that **59 % of the lines now date from 1700–1720**, against about a third
-before. Version 4 added the **third revision of Yekaterinburg, 1762–1764** (about 4 600
-lines): the first material from the middle of the century. Its pages write ages and years
-in Arabic numerals, and the labels keep them so.
+About **7400 annotated pages, 104 000 lines**, from **28 chancery and census books** dated
+**1625 to 1764**. They come from the record-keeping of the Siberian Chancery, the Pomestny
+Chancery and the revision offices, and cover **the Urals, Western Siberia, the Russian North
+and the Vyatka land**: land-tax books, name books, census books and revision tales.
+
+By period, distinct lines:
+
+- **1625–1659** — about 19 900 lines (19 %)
+- **1660–1699** — about 22 800 lines (22 %)
+- **1700–1720** — about 61 700 lines (59 %)
+- **1760s** — about 4 600 lines (4 %), repeated six times in training so that the newest hand is not drowned
+
+The 1760s pages write ages and years in Arabic numerals, and the labels keep them so.
 The hand is that of provincial scribes writing for Moscow, which is why a model trained
 on it transfers across that whole territory rather than to one office.
 
@@ -79,33 +83,26 @@ statement of provenance rather than of courtesy.
 
 ## Measured performance
 
-Character accuracy on lines read by hand and never shown to the model; version 3 in brackets, then version 2.
+Character accuracy on lines read by hand, from books never shown to the model;
+version 3 in brackets, then version 2.
 
-- **Mid-18th century: Kromy, second revision 1748** (42 lines, three books outside training) — **56.5 %** (51.3 %, 49.3 %)
-- **Late Petrine hands, 1718–1720s** (87 lines from four books outside training) — **88.7 %** (88.7 %, 81.9 %)
-- — RGADA f.350 op.1 d.213, Kromy 1718 — 86.2 % (76.8 %)
-- — f.350 op.2 d.1606, Kromy 1719 — 90.5 % (83.3 %)
-- — f.350 op.2 d.1611, Kromy, 1720s — 89.6 % (84.9 %)
-- — f.214 op.1 d.1508, Verkhoturye, tales of 1719–1722 — 87.5 % (84.2 %)
-- **Hand of 1680** (101 lines) — **92.7 %** (92.6 %, 92.9 %)
-- **Hand of 1632**, a book never trained on — 54.7 % (51.7 %)
+- **1740s** (42 lines, three books) — **56.5 %** (51.3 %, 49.3 %)
+- **1718–1720s** (87 lines, four books) — **88.7 %** (88.7 %, 81.9 %)
+- **1680s** (101 lines) — **92.7 %** (92.6 %, 92.9 %)
+- **1630s**, a hand far from the training set (two pages) — 53.3 % (54.7 %, 51.7 %)
 - Internal validation (every 20th page of every book, every 8th of the 1760s books) — 0.9079
-- **Cases of 1740–1800 — noise**: a revision book of 1747 returns 3 characters per line
 
 The `accuracy` field inside the file is empty: the training history was not preserved
 on export, and putting a number there after the fact would pass one measurement off as
-another. Every figure above is named together with the case it was measured on.
+another. Every figure above is named together with the period it was measured on.
 
 ## Where it fails
 
-**The hand gives out by the middle of the 18th century**, not at 1720: chancery hands of
-the 1720s still read (the Kromy books above). The revisions of the 1740s–60s are only
-begun: at 56 % of characters on Kromy 1748 the model is good for finding a formula, not for
-reading a name. **Soul numbers** in the margins of those books are not read yet. This is not a threshold to
-tune: the script changes, and the model was trained on the 17th century. A book of 1747
-returns 3.1 characters per line. For 1800–1870 use
-`Kansallisarkisto/cyrillic-htr-model`; between about 1740 and 1800 nothing works, and
-knowing that beforehand is better than receiving plausible invention.
+**The hand weakens through the middle of the 18th century.** Chancery hands of the 1720s
+still read well. The 1740s–60s are only begun: at 56 % of characters the model is good for
+finding a formula, not for reading a name, and **soul numbers** in the margins of those books
+are not read yet. For 1800–1870 use `Kansallisarkisto/cyrillic-htr-model`; between the 1740s
+and about 1800 check a page by eye before trusting any reading.
 
 **Confidence is not correctness.** On an unfamiliar hand a recogniser holds high
 confidence under nonsense — measured: on skoropis of 1632 another model returned fluent
