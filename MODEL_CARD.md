@@ -15,9 +15,9 @@ script:
 model_type:
   - recognition
 base_model:
-  - '10.5281/zenodo.22905381'
+  - '10.5281/zenodo.22912945'
 metrics:
-  cer: 7.38
+  cer: 7.28
 keywords:
   - skoropis
   - chancery cursive
@@ -39,11 +39,11 @@ fills that gap.
 
 - **Format** — kraken 7, `.mlmodel`, `baselines` segmentation
 - **Size** — 15 MB
-- **Version** — 3, released September 2026; the name stays `skoropis-12` across versions
-- **Base model** — version 2 of this record, [10.5281/zenodo.22905381](https://doi.org/10.5281/zenodo.22905381), itself trained from scratch
+- **Version** — 4, released September 2026; the name stays `skoropis-12` across versions
+- **Base model** — version 3 of this record, [10.5281/zenodo.22912945](https://doi.org/10.5281/zenodo.22912945); version 2 was trained from scratch
 - **Architecture** — kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers, 4.1 M parameters
-- **Training** — fine-tuned for 17 epochs, AdamW, cosine schedule, batch 16, lr 2e-4, augmentation; epoch 10 chosen on hand-read test lines, not on the internal validation score
-- **Codec** — 276 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, Cyrillic numerals, titlo abbreviations, superscript letters
+- **Training** — fine-tuned from version 3, AdamW, cosine schedule, batch 16, lr 1.5e-4, augmentation, the 1760s books repeated six times; epoch 5 chosen on hand-read test lines, not on the internal validation score
+- **Codec** — 278 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, Cyrillic numerals, titlo abbreviations, superscript letters
 - **Licence** — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **Published** — [10.5281/zenodo.22905349](https://doi.org/10.5281/zenodo.22905349), the concept DOI, which resolves to the newest version
 
@@ -58,7 +58,9 @@ Pomestny Chancery and cover **the Urals, Western Siberia, the Russian North and 
 land**: land-tax books, name books, census books of 1710 and the tales of the first
 revision. Version 3 added eleven census books of 1707–1711 (Solikamsk, Cherdyn, Tobolsk,
 Kaigorod), so that **59 % of the lines now date from 1700–1720**, against about a third
-before.
+before. Version 4 added the **third revision of Yekaterinburg, 1762–1764** (about 4 600
+lines): the first material from the middle of the century. Its pages write ages and years
+in Arabic numerals, and the labels keep them so.
 The hand is that of provincial scribes writing for Moscow, which is why a model trained
 on it transfers across that whole territory rather than to one office.
 
@@ -77,16 +79,17 @@ statement of provenance rather than of courtesy.
 
 ## Measured performance
 
-Character accuracy on lines read by hand and never shown to the model; version 2 in brackets.
+Character accuracy on lines read by hand and never shown to the model; version 3 in brackets, then version 2.
 
-- **Late Petrine hands, 1718–1720s** (87 lines from four books outside training) — **88.7 %** (81.9 %)
+- **Mid-18th century: Kromy, second revision 1748** (42 lines, three books outside training) — **56.5 %** (51.3 %, 49.3 %)
+- **Late Petrine hands, 1718–1720s** (87 lines from four books outside training) — **88.7 %** (88.7 %, 81.9 %)
 - — RGADA f.350 op.1 d.213, Kromy 1718 — 86.2 % (76.8 %)
 - — f.350 op.2 d.1606, Kromy 1719 — 90.5 % (83.3 %)
 - — f.350 op.2 d.1611, Kromy, 1720s — 89.6 % (84.9 %)
 - — f.214 op.1 d.1508, Verkhoturye, tales of 1719–1722 — 87.5 % (84.2 %)
-- **Hand of 1680** (101 lines) — **92.6 %** (92.9 %)
+- **Hand of 1680** (101 lines) — **92.7 %** (92.6 %, 92.9 %)
 - **Hand of 1632**, a book never trained on — 54.7 % (51.7 %)
-- Internal validation (every 20th page of every book) — 0.9138
+- Internal validation (every 20th page of every book, every 8th of the 1760s books) — 0.9079
 - **Cases of 1740–1800 — noise**: a revision book of 1747 returns 3 characters per line
 
 The `accuracy` field inside the file is empty: the training history was not preserved
@@ -96,7 +99,9 @@ another. Every figure above is named together with the case it was measured on.
 ## Where it fails
 
 **The hand gives out by the middle of the 18th century**, not at 1720: chancery hands of
-the 1720s still read (the Kromy books above), a revision of 1747 does not. This is not a threshold to
+the 1720s still read (the Kromy books above). The revisions of the 1740s–60s are only
+begun: at 56 % of characters on Kromy 1748 the model is good for finding a formula, not for
+reading a name. **Soul numbers** in the margins of those books are not read yet. This is not a threshold to
 tune: the script changes, and the model was trained on the 17th century. A book of 1747
 returns 3.1 characters per line. For 1800–1870 use
 `Kansallisarkisto/cyrillic-htr-model`; between about 1740 and 1800 nothing works, and
