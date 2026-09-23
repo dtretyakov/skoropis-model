@@ -39,7 +39,7 @@ fills that gap.
 
 - **Format** — kraken 7, `.mlmodel`, `baselines` segmentation
 - **Size** — 15 MB
-- **Version** — 4, released September 2026; the name stays `skoropis-12` across versions
+- **Version** — 5, released September 2026: the weights of version 4 with this card, which describes the data by period; the name stays `skoropis-12` across versions
 - **Base model** — version 3 of this record, [10.5281/zenodo.22912945](https://doi.org/10.5281/zenodo.22912945); version 2 was trained from scratch
 - **Architecture** — kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers, 4.1 M parameters
 - **Training** — fine-tuned from version 3, AdamW, cosine schedule, batch 16, lr 1.5e-4, augmentation, the 1760s books repeated six times; epoch 5 chosen on hand-read test lines, not on the internal validation score
