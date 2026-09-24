@@ -146,7 +146,8 @@ the [catalogue of censuses](https://dtretyakov.github.io/perepisi-catalog/).
 
 The link above is the **concept DOI**: it always resolves to the newest version. To pin
 the exact weights behind a result, cite the version DOI instead; each release has its own,
-listed on the record page. Version 6
+listed on the record page. Version 7 is
+[10.5281/zenodo.22933516](https://doi.org/10.5281/zenodo.22933516); version 6
 [10.5281/zenodo.22933378](https://doi.org/10.5281/zenodo.22933378) has a file kraken refuses; version 5
 [10.5281/zenodo.22921457](https://doi.org/10.5281/zenodo.22921457), version 4
 [10.5281/zenodo.22921309](https://doi.org/10.5281/zenodo.22921309), version 3
