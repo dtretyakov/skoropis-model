@@ -39,7 +39,7 @@ fills that gap.
 
 - **Format** — kraken 7, `.mlmodel`, `baselines` segmentation
 - **Size** — 15 MB
-- **Version** — 7, released September 2026: the weights of version 6 in a file kraken can load — version 6's file recorded its model type as `r` and is refused by `kraken ocr`; do not use it. The name stays `skoropis-12` across versions
+- **Version** — 8, released September 2026: the weights of versions 6 and 7 with this card. Version 6's file recorded its model type as `r` and is refused by `kraken ocr`; do not use it. The name stays `skoropis-12` across versions
 - **Base model** — version 4 of this record, [10.5281/zenodo.22921309](https://doi.org/10.5281/zenodo.22921309); version 2 was trained from scratch
 - **Architecture** — kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers, 4.1 M parameters
 - **Training** — fine-tuned from version 4, AdamW, cosine schedule, batch 16, lr 1.5e-4, augmentation, 8 epochs; the 1740s books repeated five times, the 1760s four, the 1620s–30s six; epoch 8 chosen on hand-read test lines, not on the internal validation score
@@ -88,7 +88,7 @@ text is distributed with the model: the weights carry neither text nor images.
 
 ## Measured performance
 
-Character accuracy of the weights of versions 6 and 7; version 4 (whose weights version 5 also carries) in brackets.
+Character accuracy of the weights of versions 6–8; version 4 (whose weights version 5 also carries) in brackets.
 
 On lines read by hand, from books never shown to the model:
 
