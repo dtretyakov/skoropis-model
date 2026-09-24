@@ -15,7 +15,7 @@ script:
 model_type:
   - recognition
 base_model:
-  - '10.5281/zenodo.22912945'
+  - '10.5281/zenodo.22921309'
 metrics:
   cer: 7.28
 keywords:
@@ -32,18 +32,18 @@ citation: 'dtretyakov. skoropis-12: a kraken model for 17th-century Russian chan
 # skoropis-12 — a kraken model for 17th-century Russian chancery cursive
 
 A line recogniser for **приказная скоропись**, the chancery cursive of Muscovite
-offices, covering roughly **1620–1720**. No public model reads this hand as of
+offices, covering roughly **1620–1720** and reaching into the **1740s–60s**. No public model reads this hand as of
 September 2026: the Slavic models in Transkribus are 16th-century semi-uncial and
 11th–16th-century uncial, and the Russian ones begin in the 18th century. This one
 fills that gap.
 
 - **Format** — kraken 7, `.mlmodel`, `baselines` segmentation
 - **Size** — 15 MB
-- **Version** — 5, released September 2026: the weights of version 4 with this card, which describes the data by period; the name stays `skoropis-12` across versions
-- **Base model** — version 3 of this record, [10.5281/zenodo.22912945](https://doi.org/10.5281/zenodo.22912945); version 2 was trained from scratch
+- **Version** — 6, released September 2026; the name stays `skoropis-12` across versions
+- **Base model** — version 4 of this record, [10.5281/zenodo.22921309](https://doi.org/10.5281/zenodo.22921309); version 2 was trained from scratch
 - **Architecture** — kraken's default recognition VGSL: 4 convolutional blocks, 3 bidirectional LSTM layers, 4.1 M parameters
-- **Training** — fine-tuned from version 3, AdamW, cosine schedule, batch 16, lr 1.5e-4, augmentation, the 1760s books repeated six times; epoch 5 chosen on hand-read test lines, not on the internal validation score
-- **Codec** — 278 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, Cyrillic numerals, titlo abbreviations, superscript letters
+- **Training** — fine-tuned from version 4, AdamW, cosine schedule, batch 16, lr 1.5e-4, augmentation, 8 epochs; the 1740s books repeated five times, the 1760s four, the 1620s–30s six; epoch 8 chosen on hand-read test lines, not on the internal validation score
+- **Codec** — 279 symbols: pre-reform orthography with **ѣ ѳ ѵ ъ**, Cyrillic numerals, titlo abbreviations, superscript letters
 - **Licence** — [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **Published** — [10.5281/zenodo.22905349](https://doi.org/10.5281/zenodo.22905349), the concept DOI, which resolves to the newest version
 
@@ -52,45 +52,59 @@ Install it with `kraken get 10.5281/zenodo.22905349`, then run
 
 ## Training data
 
-About **7400 annotated pages, 104 000 lines**, from **28 chancery and census books** dated
-**1625 to 1764**. They come from the record-keeping of the Siberian Chancery, the Pomestny
-Chancery and the revision offices, and cover **the Urals, Western Siberia, the Russian North
-and the Vyatka land**: land-tax books, name books, census books and revision tales.
+About **14 500 annotated pages, 155 000 lines**, from **49 chancery, census and revision
+books** dated **1621 to 1764**. They come from the record-keeping of the Siberian Chancery, the
+Pomestny Chancery and the revision offices, and cover **the Urals, Western Siberia, the Kama
+land, the Russian North, the Vyatka land and the Middle Volga**: land-tax books, name books,
+census books and revision tales.
 
 By period, distinct lines:
 
-- **1625–1659** — about 19 900 lines (19 %)
-- **1660–1699** — about 22 800 lines (22 %)
-- **1700–1720** — about 61 700 lines (59 %)
-- **1760s** — about 4 600 lines (4 %), repeated six times in training so that the newest hand is not drowned
+- **1620–1659** — about 65 400 lines (42 %)
+- **1660–1699** — about 22 700 lines (15 %)
+- **1700–1720** — about 53 200 lines (34 %)
+- **1740s** — about 9 800 lines (6 %), repeated five times in training
+- **1760s** — about 4 100 lines (3 %), repeated four times
 
-The 1760s pages write ages and years in Arabic numerals, and the labels keep them so.
+About a third of the 1620–1659 lines come from microfilm rather than colour scans, as do
+the 1630s test pages. The 1740s and 1760s pages write soul numbers, ages and years in Arabic
+numerals, and the labels keep them so; lines whose number stands in a separate column the
+line box does not reach were discarded rather than kept with a digit the image lacks.
 The hand is that of provincial scribes writing for Moscow, which is why a model trained
 on it transfers across that whole territory rather than to one office.
 
 The set is not fixed. It grows as more material is aligned, and a later release of this
 model may rest on a different mixture within the same period and region.
 
-Editions normalise what the scribe wrote: ages printed as Arabic numbers where the page
-spells them out or writes Cyrillic numerals, surnames in capitals. Before training, every
+Editions normalise what the scribe wrote: ages and counts printed as Arabic numbers where
+the page spells them out or writes Cyrillic numerals, years moved to the Christian era,
+surnames in capitals. Before training, every
 book was checked by eye on several pages and the labels were brought back to what the page
 shows; lines whose alignment could not be trusted were discarded rather than kept.
 
 Ground truth was made by aligning page images with transcriptions published by others —
-**Yu. V. Konovalov**, the **census1710** project and **Rodnaya Vyatka** — with a smaller
+**Yu. V. Konovalov**, the **census1710** project, **Rodnaya Vyatka** (I. S. Khudyakov) and
+**A. G. Ushenin** (1670.ru) — with a smaller
 part annotated directly. The model exists because those transcriptions do, and that is a
 statement of provenance rather than of courtesy.
 
 ## Measured performance
 
-Character accuracy on lines read by hand, from books never shown to the model;
-version 3 in brackets, then version 2.
+Character accuracy; version 4 (whose weights version 5 also carries) in brackets.
 
-- **1740s** (42 lines, three books) — **56.5 %** (51.3 %, 49.3 %)
-- **1718–1720s** (87 lines, four books) — **88.7 %** (88.7 %, 81.9 %)
-- **1680s** (101 lines) — **92.7 %** (92.6 %, 92.9 %)
-- **1630s**, a hand far from the training set (two pages) — 53.3 % (54.7 %, 51.7 %)
-- Internal validation (every 20th page of every book, every 8th of the 1760s books) — 0.9079
+On lines read by hand, from books never shown to the model:
+
+- **1740s** (42 lines, three books) — **61.2 %** (56.5 %)
+- **1718–1720s** (87 lines, four books) — **89.8 %** (88.7 %)
+- **1680s** (101 lines) — **92.7 %** (92.7 %)
+
+On whole pages held out from books whose other pages were trained on — a measure of how
+well the model learns one scribe, not a period:
+
+- **1740s** (13 pages) — **88.3 %** (70.4 %)
+- **1630s**, microfilm (36 pages) — **75.5 %** (70.3 %)
+
+- Internal validation (every 20th page of most books, every 8th or 10th of the newer ones) — 0.9079
 
 The `accuracy` field inside the file is empty: the training history was not preserved
 on export, and putting a number there after the fact would pass one measurement off as
@@ -99,9 +113,10 @@ another. Every figure above is named together with the period it was measured on
 ## Where it fails
 
 **The hand weakens through the middle of the 18th century.** Chancery hands of the 1720s
-still read well. The 1740s–60s are only begun: at 56 % of characters the model is good for
-finding a formula, not for reading a name, and **soul numbers** in the margins of those books
-are not read yet. For 1800–1870 use `Kansallisarkisto/cyrillic-htr-model`; between the 1740s
+still read well. In the 1740s–60s a hand the model has learned reads at nearly nine
+characters in ten, but an unfamiliar one at about six: good for finding a formula, not for
+reading a name. One of the three scribes in the 1740s test barely moved between versions
+(47 → 49 %): that hand is in no transcription the model was trained on. For 1800–1870 use `Kansallisarkisto/cyrillic-htr-model`; between the 1740s
 and about 1800 check a page by eye before trusting any reading.
 
 **Confidence is not correctness.** On an unfamiliar hand a recogniser holds high
@@ -138,4 +153,4 @@ listed on the record page. Version 5 is
 [10.5281/zenodo.22905381](https://doi.org/10.5281/zenodo.22905381).
 
 Trained on ground truth aligned against transcriptions by Yu. V. Konovalov, the
-census1710 project and Rodnaya Vyatka.
+census1710 project, Rodnaya Vyatka and A. G. Ushenin.
