@@ -82,11 +82,9 @@ surnames in capitals. Before training, every
 book was checked by eye on several pages and the labels were brought back to what the page
 shows; lines whose alignment could not be trusted were discarded rather than kept.
 
-Ground truth was made by aligning page images with transcriptions published by others —
-**Yu. V. Konovalov**, the **census1710** project, **Rodnaya Vyatka** (I. S. Khudyakov) and
-**A. G. Ushenin** (1670.ru) — with a smaller
-part annotated directly. The model exists because those transcriptions do, and that is a
-statement of provenance rather than of courtesy.
+Ground truth was made by aligning page images with published transcriptions of these
+books made by Russian genealogists, with a smaller part annotated directly. No transcription
+text is distributed with the model: the weights carry neither text nor images.
 
 ## Measured performance
 
@@ -153,6 +151,3 @@ listed on the record page. Version 7 is
 [10.5281/zenodo.22921309](https://doi.org/10.5281/zenodo.22921309), version 3
 [10.5281/zenodo.22912945](https://doi.org/10.5281/zenodo.22912945), version 2
 [10.5281/zenodo.22905381](https://doi.org/10.5281/zenodo.22905381).
-
-Trained on ground truth aligned against transcriptions by Yu. V. Konovalov, the
-census1710 project, Rodnaya Vyatka and A. G. Ushenin.
